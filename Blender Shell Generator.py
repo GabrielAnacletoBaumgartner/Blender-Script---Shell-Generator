@@ -10,16 +10,17 @@ debug0 = False # Debug message for the checks step.
 debug1 = False # Debug message for the shell clones.
 debug2 = False
 debug3 = False
-debug4 = False
-debug5 = False
-Check = True
 ShellCount = 16 # Ammount of shells (Must be more than 0).
 ShellDistance = 0.01 # Distance of shells (must be more than 0).
 ShellMode = "Simple" # Type of shell (Must be "Simple" or "Complex").
 IsShellInternal = False #Set this to True if you want your shell to be internal.
 ApplyModifier = True # Automatically applies the modifier if set to True.
-RemoveBaseVertexes = True # If set to true, automatically removes the vertex with the same position of the Base object from the shell objects.
+RemoveBaseVertexes = True # If set to true, automatically removes the vertices in the same position of the Base object from the shell objects.
 SelectLinkedFix = True # EXPERIMENTAL THING. For now leave it as it is. I've done this way for two reasons: Performance and Blender being unable to find the matching vertexes with too many shells (at least with the method i used).
+
+#Variables:
+
+Check = True
 
 if (ClearConsole == True): # As the name suggests it clears the console if ClearConsole is active.
     os.system('cls')
@@ -85,11 +86,11 @@ if (Check == True): # Execute the code if everything went well during the checks
                     print("Searching for these:")
                     print("Coordinates from base:", co_base)
                     print("")
-                for shell_vertex in shell_object.data.vertices: # Checks each vertex
-                    co_shell = shell_object.matrix_world @ shell_vertex.co # Gets coordinates from 
+                for shell_vertex in shell_object.data.vertices: # Checks each vertex from Shell Object
+                    co_shell = shell_object.matrix_world @ shell_vertex.co # Gets coordinates from each vertex
                     if (debug3 == True):
                         print("Shell Object:", shell_object, ". Coordinates:", co_shell)
-                    if (co_base == co_shell):
+                    if (co_base == co_shell): # If its coordinates matches the coordinates of the base object
                         MatchIndex = shell_vertex.index
                         if (debug3 == True):
                             print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
@@ -101,11 +102,11 @@ if (Check == True): # Execute the code if everything went well during the checks
                         bpy.ops.mesh.select_mode(type="VERT")
                         bpy.ops.mesh.select_all(action='DESELECT')
                         bpy.ops.object.mode_set(mode='OBJECT')
-                        shell_object.data.vertices[MatchIndex].select = True
+                        shell_object.data.vertices[MatchIndex].select = True # Select the vertex
                         bpy.ops.object.mode_set(mode='EDIT')                        
                         if (SelectLinkedFix == True):
                             bpy.ops.mesh.select_linked(delimit=set())
-                        bpy.ops.mesh.delete(type='VERT')
+                        bpy.ops.mesh.delete(type='VERT') # And delete it.
                         bpy.ops.object.mode_set(mode='OBJECT')
                 
 else: # Ends the script if something went wrong during the checks step.
